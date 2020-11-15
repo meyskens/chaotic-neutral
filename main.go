@@ -31,7 +31,7 @@ func main() {
 	http.HandleFunc("/*", requestHandler)
 
 	log.Println("Starting webserver...")
-	err := http.ListenAndServe(":80", nil)
+	err = http.ListenAndServe(":80", nil)
 	log.Println(err)
 }
 
@@ -46,5 +46,5 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 	// deep copy the url.URL
 	dst, _ := url.Parse(destination.String())
 	dst.Path = path.Join(destination.Path, r.URL.Path)
-	http.Redirect(w, r, path.Join(destination, dst.String()), http.StatusTemporaryRedirect)
+	http.Redirect(w, r, dst.String(), http.StatusTemporaryRedirect)
 }
