@@ -5,11 +5,12 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"net/url"
 	"os"
 	"path"
 )
 
-var destination = ""
+var destination *url.URL
 
 const rick = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
@@ -20,7 +21,11 @@ func main() {
 		return
 	}
 
-	destination = os.Getenv("DESTINATION")
+	var err error
+	destination, err = url.Parse(os.Getenv("DESTINATION"))
+	if err != nil {
+		log.Panicln(err)
+	}
 
 	http.HandleFunc("/", requestHandler)
 	http.HandleFunc("/*", requestHandler)
@@ -36,6 +41,10 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Rick")
 		http.Redirect(w, r, rick, http.StatusTemporaryRedirect)
 	}
+
 	log.Println("Good")
-	http.Redirect(w, r, path.Join(destination, r.URL.Path), http.StatusTemporaryRedirect)
+	// deep copy the url.URL
+	dst, _ := url.Parse(destination.String())
+	dst.Path = path.Join(destination.Path, r.URL.Path)
+	http.Redirect(w, r, path.Join(destination, dst.String()), http.StatusTemporaryRedirect)
 }
