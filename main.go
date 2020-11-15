@@ -25,7 +25,7 @@ func main() {
 	http.HandleFunc("/", requestHandler)
 	http.HandleFunc("/*", requestHandler)
 
-	log.Panicln("Starting webserver...")
+	log.Println("Starting webserver...")
 	err := http.ListenAndServe(":80", nil)
 	log.Println(err)
 }
